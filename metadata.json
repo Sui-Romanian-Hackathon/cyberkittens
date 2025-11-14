@@ -1,5 +1,5 @@
-
 {
   "name": "CyberKittens's SuiAI",
-  "description": "An AI-powered chatbot by CyberKittens to help developers learn, build, and launch on the Sui blockchain. Get step-by-step guidance, code refactoring, Sui Vision analysis, stack recommendations, and business plan assistance powered by Gemini."
+  "description": "An AI-powered chatbot by CyberKittens to help developers learn, build, and launch on the Sui blockchain. Get step-by-step guidance, code refactoring, Sui Vision analysis, stack recommendations, and business plan assistance powered by Gemini.",
+  "requestFramePermissions": []
 }
