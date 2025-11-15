@@ -25,8 +25,7 @@ KittyAudit is a revolutionary AI-powered smart contract vulnerability scanner de
 9. [User Experience](#9-user-experience)
 10. [Security & Privacy](#10-security--privacy)
 11. [Roadmap](#11-roadmap)
-12. [Tokenomics](#12-tokenomics)
-13. [Conclusion](#13-conclusion)
+12. [Conclusion](#13-conclusion)
 
 ---
 
@@ -936,9 +935,9 @@ Treasury Distribution:
 
 ---
 
-## 13. Conclusion
+## 12. Conclusion
 
-### 13.1 Summary
+### 12.1 Summary
 
 KittyAudit represents the future of smart contract security auditing: fast, affordable, accessible, and verifiable. By combining cutting-edge AI technology with blockchain infrastructure, we've created a solution that serves both indie developers and enterprise teams.
 
@@ -949,7 +948,7 @@ KittyAudit represents the future of smart contract security auditing: fast, affo
 - ✅ On-chain verification via NFT badges
 - ✅ Production-ready technology
 
-### 13.2 Market Opportunity
+### 12.2 Market Opportunity
 
 The smart contract security market is projected to reach $2B by 2026, with Sui capturing an increasing share of L1 activity. KittyAudit is positioned to become the de facto security standard for the Sui ecosystem.
 
