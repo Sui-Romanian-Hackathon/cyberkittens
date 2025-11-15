@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { AlertCircle, CheckCircle, Shield, Upload, FileCode, Zap, Award } from 'lucide-react';
+import { AlertCircle, CheckCircle, Shield, Upload, FileCode, Zap, Award, Moon, Sun } from 'lucide-react';
 
 // Main App Component
 export default function SuiVulnerabilityScanner() {
@@ -12,6 +12,21 @@ export default function SuiVulnerabilityScanner() {
   const [mintStatus, setMintStatus] = useState('');
   const [showAddressInput, setShowAddressInput] = useState(false);
   const [addressInput, setAddressInput] = useState('');
+  const [darkMode, setDarkMode] = useState(false);
+
+  // Toggle dark mode
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
+  // Apply dark mode class to document
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
 
   // Connect wallet with manual address input
   const connectWallet = () => {
@@ -145,8 +160,10 @@ export default function SuiVulnerabilityScanner() {
       const response = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-        },
+        "Content-Type": "application/json",
+        "x-api-key": import.meta.env.VITE_ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01"
+      },
         body: JSON.stringify({
           model: "claude-sonnet-4-20250514",
           max_tokens: 1000,
@@ -272,44 +289,55 @@ https://suiexplorer.com/object/${nftId}?network=testnet`);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className={`min-h-screen transition-colors ${darkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-white to-indigo-50'}`}>
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
+      <header className={`border-b shadow-sm transition-colors ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Shield className="text-blue-600" size={32} />
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">KittyAudit</h1>
-              <p className="text-xs text-gray-500">AI-Powered Contract Security</p>
+              <h1 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>KittyAudit</h1>
+              <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>AI-Powered Contract Security</p>
             </div>
           </div>
-          
-          {!account ? (
+
+          <div className="flex items-center gap-4">
+            {/* Dark Mode Toggle */}
             <button
-              onClick={connectWallet}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
+              onClick={toggleDarkMode}
+              className={`p-2 rounded-lg transition-colors ${darkMode ? 'bg-gray-700 hover:bg-gray-600 text-yellow-400' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'}`}
+              aria-label="Toggle dark mode"
             >
-              Connect Wallet
+              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
-          ) : (
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <div className="text-sm font-medium text-gray-900">
-                  {account.address.substr(0, 6)}...{account.address.substr(-4)}
-                </div>
-                <div className="text-xs text-gray-500">
-                  {scansRemaining} free scan{scansRemaining !== 1 ? 's' : ''} left
-                </div>
-              </div>
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+
+            {!account ? (
               <button
-                onClick={disconnectWallet}
-                className="text-xs text-gray-500 hover:text-gray-700 underline"
+                onClick={connectWallet}
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
               >
-                Disconnect
+                Connect Wallet
               </button>
-            </div>
-          )}
+            ) : (
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <div className={`text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    {account.address.substr(0, 6)}...{account.address.substr(-4)}
+                  </div>
+                  <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                    {scansRemaining} free scan{scansRemaining !== 1 ? 's' : ''} left
+                  </div>
+                </div>
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <button
+                  onClick={disconnectWallet}
+                  className={`text-xs underline ${darkMode ? 'text-gray-400 hover:text-gray-300' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  Disconnect
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
@@ -318,18 +346,18 @@ https://suiexplorer.com/object/${nftId}?network=testnet`);
         {/* Wallet Address Input Modal */}
         {showAddressInput && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+            <div className={`rounded-xl shadow-2xl max-w-md w-full p-6 ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
               <div className="flex items-center gap-2 mb-4">
                 <Shield className="text-blue-600" size={24} />
-                <h3 className="text-xl font-bold text-gray-900">Connect Your Wallet</h3>
+                <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Connect Your Wallet</h3>
               </div>
-              
-              <p className="text-sm text-gray-600 mb-4">
+
+              <p className={`text-sm mb-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 Enter your Sui wallet address to receive your audit badge NFT
               </p>
-              
+
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className={`block text-sm font-medium mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                   Sui Wallet Address
                 </label>
                 <input
@@ -337,16 +365,16 @@ https://suiexplorer.com/object/${nftId}?network=testnet`);
                   value={addressInput}
                   onChange={(e) => setAddressInput(e.target.value)}
                   placeholder="0x1234567890abcdef..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm ${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900'}`}
                   autoFocus
                 />
-                <p className="mt-2 text-xs text-gray-500">
+                <p className={`mt-2 text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                   💡 Tip: Copy your address from Sui Wallet, Suiet, or Ethos wallet
                 </p>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                <p className="text-xs text-blue-800">
+              <div className={`border rounded-lg p-3 mb-4 ${darkMode ? 'bg-blue-900 border-blue-700' : 'bg-blue-50 border-blue-200'}`}>
+                <p className={`text-xs ${darkMode ? 'text-blue-200' : 'text-blue-800'}`}>
                   <strong>Don't have a Sui wallet?</strong><br/>
                   • Install <a href="https://suiwallet.com" target="_blank" rel="noopener noreferrer" className="underline">Sui Wallet</a><br/>
                   • Or use <a href="https://suiet.app" target="_blank" rel="noopener noreferrer" className="underline">Suiet</a> or <a href="https://ethoswallet.xyz" target="_blank" rel="noopener noreferrer" className="underline">Ethos</a>
@@ -359,7 +387,7 @@ https://suiexplorer.com/object/${nftId}?network=testnet`);
                     setShowAddressInput(false);
                     setAddressInput('');
                   }}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
+                  className={`flex-1 px-4 py-2 border rounded-lg transition font-medium ${darkMode ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-700 hover:bg-gray-50'}`}
                 >
                   Cancel
                 </button>
@@ -377,24 +405,24 @@ https://suiexplorer.com/object/${nftId}?network=testnet`);
         {/* Hero Section */}
         {!scanResult && (
           <div className="text-center mb-8">
-            <h2 className="text-4xl font-bold text-gray-900 mb-3">
+            <h2 className={`text-4xl font-bold mb-3 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
               Scan Your Sui Move Contracts
             </h2>
-            <p className="text-lg text-gray-600 mb-6">
+            <p className={`text-lg mb-6 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
               AI-powered vulnerability detection in seconds
             </p>
             <div className="flex justify-center gap-8 text-sm">
               <div className="flex items-center gap-2">
                 <Zap className="text-yellow-500" size={20} />
-                <span className="text-gray-700">1000x Faster</span>
+                <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>1000x Faster</span>
               </div>
               <div className="flex items-center gap-2">
                 <Shield className="text-blue-500" size={20} />
-                <span className="text-gray-700">Visual NFT Badges</span>
+                <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>Visual NFT Badges</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle className="text-green-500" size={20} />
-                <span className="text-gray-700">Free First Scan</span>
+                <span className={darkMode ? 'text-gray-300' : 'text-gray-700'}>Free First Scan</span>
               </div>
             </div>
           </div>
@@ -403,12 +431,12 @@ https://suiexplorer.com/object/${nftId}?network=testnet`);
         {/* Scanner Interface */}
         <div className="grid md:grid-cols-2 gap-6">
           {/* Input Section */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+          <div className={`rounded-xl shadow-lg p-6 border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center gap-2 mb-4">
               <FileCode className="text-blue-600" size={24} />
-              <h3 className="text-xl font-bold text-gray-900">Contract Code</h3>
+              <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Contract Code</h3>
             </div>
-            
+
             <textarea
               value={contractCode}
               onChange={(e) => setContractCode(e.target.value)}
@@ -417,12 +445,12 @@ https://suiexplorer.com/object/${nftId}?network=testnet`);
 Example:
 module my_contract::token {
     use sui::coin;
-    
+
     public fun transfer(...) {
         // Your contract logic
     }
 }"
-              className="w-full h-96 p-4 border border-gray-300 rounded-lg font-mono text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full h-96 p-4 border rounded-lg font-mono text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${darkMode ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400' : 'bg-white border-gray-300 text-gray-900'}`}
               disabled={loading}
             />
 
@@ -445,21 +473,21 @@ module my_contract::token {
             </button>
 
             {!account && (
-              <p className="text-sm text-gray-500 text-center mt-2">
+              <p className={`text-sm text-center mt-2 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                 Connect wallet to start scanning
               </p>
             )}
           </div>
 
           {/* Results Section */}
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+          <div className={`rounded-xl shadow-lg p-6 border ${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center gap-2 mb-4">
               <AlertCircle className="text-purple-600" size={24} />
-              <h3 className="text-xl font-bold text-gray-900">Scan Results</h3>
+              <h3 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>Scan Results</h3>
             </div>
 
             {!scanResult ? (
-              <div className="h-96 flex items-center justify-center text-gray-400">
+              <div className={`h-96 flex items-center justify-center ${darkMode ? 'text-gray-500' : 'text-gray-400'}`}>
                 <div className="text-center">
                   <Shield size={64} className="mx-auto mb-4 opacity-20" />
                   <p>Scan results will appear here</p>
