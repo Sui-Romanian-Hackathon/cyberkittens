@@ -155,42 +155,26 @@ export default function SuiVulnerabilityScanner() {
     setScanResult(null);
     setBadgeImage(null);
 
-    // Call AI model API (Claude via Anthropic API)
+    // Call AI model API via proxy server
     try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      const response = await fetch("http://localhost:3001/api/scan", {
         method: "POST",
         headers: {
-        "Content-Type": "application/json",
-        "x-api-key": import.meta.env.VITE_ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01"
-      },
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1000,
-          messages: [
-            {
-              role: "user",
-              content: `Analyze this Sui Move smart contract for vulnerabilities. Return ONLY a JSON object with this structure:
-{
-  "severity": "critical|high|medium|low",
-  "score": 0-100,
-  "vulnerabilities": [
-    {"type": "string", "description": "string", "line": number, "severity": "string"}
-  ],
-  "recommendations": ["string"],
-  "summary": "string"
-}
-
-Contract code:
-${contractCode}`
-            }
-          ],
+          contractCode: contractCode
         })
       });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to scan contract');
+      }
+
       const data = await response.json();
-      
-      // Parse AI response
+
+      // Parse AI response - proxy returns Anthropic API response format
       let resultText = data.content
         .map(item => (item.type === "text" ? item.text : ""))
         .join("\n")
@@ -198,7 +182,7 @@ ${contractCode}`
 
       // Remove markdown code fences if present
       resultText = resultText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      
+
       const result = JSON.parse(resultText);
       
       setScanResult(result);
